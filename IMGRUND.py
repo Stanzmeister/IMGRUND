@@ -29,79 +29,75 @@ def generate_wifi_qr():
     return img_byte_arr.getvalue()
 
 def main():
-    # Custom CSS für 100%-ige Zentrierung
+    # Custom CSS für Zentrierung
     st.markdown("""
     <style>
-    .centered-page {
-        display: flex !important;
-        flex-direction: column !important;
-        align-items: center !important;
-        justify-content: center !important;
-        text-align: center !important;
+    .main-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        max-width: 600px;
+        margin: 0 auto;
+        padding: 20px;
     }
-    .logo-img {
-        margin: 0 auto 1rem auto !important;
-        display: block !important;
+    .logo-container {
+        margin-bottom: 20px;
     }
-    .instagram-box {
-        margin: 1.5rem auto !important;
-        text-align: center !important;
-        max-width: 300px !important;
+    .instagram-container {
+        margin: 25px 0;
+        width: 100%;
     }
-    .stRadio > div {
-        display: flex !important;
-        justify-content: center !important;
-    }
-    .stButton > button {
-        margin: 0 auto !important;
-        display: block !important;
+    .instagram-button {
+        background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+        color: white !important;
+        border: none;
+        padding: 12px 30px;
+        border-radius: 30px;
+        font-size: 18px;
+        font-weight: bold;
+        margin: 10px 0;
+        cursor: pointer;
+        box-shadow: 0 4px 15px rgba(225, 48, 108, 0.3);
+        text-decoration: none;
+        display: inline-block;
     }
     </style>
     """, unsafe_allow_html=True)
-
-    # Hauptcontainer erzwingen
-    st.markdown('<div class="centered-page">', unsafe_allow_html=True)
-
-    # 1. Logo (absolut zentriert)
+    
+    # Hauptcontainer
+    st.markdown('<div class="main-container">', unsafe_allow_html=True)
+    
+    # Logo-Bereich (zentriert)
+    st.markdown('<div class="logo-container">', unsafe_allow_html=True)
     try:
-        st.image("LOGO_IM_GRUND.png", width=200, use_container_width=False, output_format="PNG", 
-                caption='', clamp=False, channels='RGB', output_format="PNG")
+        st.image("LOGO_IM_GRUND.png", width=200, use_container_width=False)
     except:
         st.title("🍽️ Restaurant IM GRUND")
-
-    # 2. Untertitel
     st.subheader("Vielen Dank für Ihren Besuch!")
-
-    # 3. Instagram-Bereich (zentriert in Box)
-    st.markdown('<div class="instagram-box">', unsafe_allow_html=True)
+    st.markdown('</div>', unsafe_allow_html=True)
+    
+    # Instagram-Bereich (zentriert)
+    st.markdown('<div class="instagram-container">', unsafe_allow_html=True)
     st.markdown(
-        f'<a href="{INSTAGRAM_LINK}" target="_blank">'
-        '<button style="'
-        'background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);'
-        'color: white; border: none; padding: 12px 30px; border-radius: 30px;'
-        'font-size: 18px; font-weight: bold; margin: 10px 0; cursor: pointer;'
-        'box-shadow: 0 4px 15px rgba(225, 48, 108, 0.3);">'
-        'Folge uns auf Instagram'
-        '</button>'
-        '</a>'
-        '<p style="margin-top: 8px; font-size: 16px;">'
-        'Verpasse keine Angebote und Geschenke! 🎁'
-        '</p>',
+        f'<a href="{INSTAGRAM_LINK}" target="_blank" class="instagram-button">Folge uns auf Instagram</a>',
         unsafe_allow_html=True
     )
+    st.markdown("Verpasse keine Angebote und Geschenke! 🎁")
     st.markdown('</div>', unsafe_allow_html=True)
-
-    # 4. Auswahl (zentriert)
+    
+    # Auswahl-Bereich
     choice = st.radio(
         "Möchten Sie uns auf Google Maps bewerten?",
         ("⭐ Ja, gerne!", "📶 Nein, ich möchte nur WLAN nutzen"),
         index=None
     )
-
-    # 5. Aktionen
+    
+    # Bewertungsoption
     if choice == "⭐ Ja, gerne!":
         st.link_button("📝 Bewertung schreiben", GOOGLE_MAPS_LINK)
     
+    # WLAN-Option
     elif choice == "📶 Nein, ich möchte nur WLAN nutzen":
         st.subheader("WLAN-Zugang")
         col1, col2 = st.columns(2)
@@ -133,8 +129,8 @@ def main():
                     3. Passwort einfügen
                 </div>
             """, unsafe_allow_html=True)
-
-    st.markdown('</div>', unsafe_allow_html=True)  # Ende centered-page
+    
+    st.markdown('</div>', unsafe_allow_html=True)  # Ende main-container
 
 if __name__ == "__main__":
     main()
