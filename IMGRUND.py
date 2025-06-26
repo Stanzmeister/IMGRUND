@@ -29,75 +29,88 @@ def generate_wifi_qr():
     return img_byte_arr.getvalue()
 
 def main():
-    # Custom CSS für Zentrierung
+    # CSS mit !important für absolute Kontrolle
     st.markdown("""
     <style>
-    .main-container {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        text-align: center;
-        max-width: 600px;
-        margin: 0 auto;
-        padding: 20px;
+    /* Zentriert ALLE Elemente */
+    [data-testid="stAppViewContainer"] > .main {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        text-align: center !important;
     }
+    
+    /* Logo-Container */
     .logo-container {
-        margin-bottom: 20px;
+        margin: 0 auto 1rem auto !important;
+        text-align: center !important;
     }
-    .instagram-container {
-        margin: 25px 0;
-        width: 100%;
+    
+    /* Instagram-Bereich */
+    .instagram-box {
+        margin: 1.5rem auto !important;
+        max-width: 300px !important;
     }
-    .instagram-button {
-        background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
-        color: white !important;
-        border: none;
-        padding: 12px 30px;
-        border-radius: 30px;
-        font-size: 18px;
-        font-weight: bold;
-        margin: 10px 0;
-        cursor: pointer;
-        box-shadow: 0 4px 15px rgba(225, 48, 108, 0.3);
-        text-decoration: none;
-        display: inline-block;
+    
+    /* Radio-Buttons zentrieren */
+    [data-testid="stRadio"] > div {
+        display: flex !important;
+        justify-content: center !important;
+    }
+    
+    /* Buttons zentrieren */
+    [data-testid="stButton"] > button {
+        margin: 0 auto !important;
+    }
+    
+    /* Spalten-Container für WLAN */
+    [data-testid="column"] {
+        align-items: center !important;
     }
     </style>
     """, unsafe_allow_html=True)
-    
-    # Hauptcontainer
-    st.markdown('<div class="main-container">', unsafe_allow_html=True)
-    
-    # Logo-Bereich (zentriert)
-    st.markdown('<div class="logo-container">', unsafe_allow_html=True)
-    try:
-        st.image("LOGO_IM_GRUND.png", width=200, use_container_width=False)
-    except:
-        st.title("🍽️ Restaurant IM GRUND")
-    st.subheader("Vielen Dank für Ihren Besuch!")
-    st.markdown('</div>', unsafe_allow_html=True)
-    
-    # Instagram-Bereich (zentriert)
-    st.markdown('<div class="instagram-container">', unsafe_allow_html=True)
-    st.markdown(
-        f'<a href="{INSTAGRAM_LINK}" target="_blank" class="instagram-button">Folge uns auf Instagram</a>',
-        unsafe_allow_html=True
-    )
-    st.markdown("Verpasse keine Angebote und Geschenke! 🎁")
-    st.markdown('</div>', unsafe_allow_html=True)
-    
-    # Auswahl-Bereich
+
+    # 1. Logo (absolut zentriert)
+    with st.container():
+        st.markdown('<div class="logo-container">', unsafe_allow_html=True)
+        try:
+            st.image("LOGO_IM_GRUND.png", width=200, use_container_width=False)
+        except:
+            st.title("🍽️ Restaurant IM GRUND")
+        st.subheader("Vielen Dank für Ihren Besuch!")
+        st.markdown('</div>', unsafe_allow_html=True)
+
+    # 2. Instagram-Bereich (perfekt zentriert)
+    with st.container():
+        st.markdown('<div class="instagram-box">', unsafe_allow_html=True)
+        st.markdown(
+            f'<a href="{INSTAGRAM_LINK}" target="_blank">'
+            '<button style="'
+            'background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);'
+            'color: white; border: none; padding: 12px 30px; border-radius: 30px;'
+            'font-size: 18px; font-weight: bold; margin: 10px 0; cursor: pointer;'
+            'box-shadow: 0 4px 15px rgba(225, 48, 108, 0.3);">'
+            'Folge uns auf Instagram'
+            '</button>'
+            '</a>'
+            '<p style="margin-top: 8px; font-size: 16px;">'
+            'Verpasse keine Angebote und Geschenke! 🎁'
+            '</p>',
+            unsafe_allow_html=True
+        )
+        st.markdown('</div>', unsafe_allow_html=True)
+
+    # 3. Auswahl (zentriert)
     choice = st.radio(
         "Möchten Sie uns auf Google Maps bewerten?",
         ("⭐ Ja, gerne!", "📶 Nein, ich möchte nur WLAN nutzen"),
         index=None
     )
-    
-    # Bewertungsoption
+
+    # 4. Aktionen
     if choice == "⭐ Ja, gerne!":
         st.link_button("📝 Bewertung schreiben", GOOGLE_MAPS_LINK)
     
-    # WLAN-Option
     elif choice == "📶 Nein, ich möchte nur WLAN nutzen":
         st.subheader("WLAN-Zugang")
         col1, col2 = st.columns(2)
@@ -119,9 +132,6 @@ def main():
                         🔗 Auto-Connect (Android)
                     </button>
                 </a>
-            """, unsafe_allow_html=True)
-            
-            st.markdown(f"""
                 <div style="font-size:14px; margin-top:15px; text-align:left">
                     <strong>Für iPhone:</strong><br>
                     1. Einstellungen > WLAN<br>
@@ -129,8 +139,6 @@ def main():
                     3. Passwort einfügen
                 </div>
             """, unsafe_allow_html=True)
-    
-    st.markdown('</div>', unsafe_allow_html=True)  # Ende main-container
 
 if __name__ == "__main__":
     main()
