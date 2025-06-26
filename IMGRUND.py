@@ -33,74 +33,25 @@ def generate_wifi_qr():
     img_byte_arr = img_byte_arr.getvalue()
     return img_byte_arr
 
-# Funktion für Video-Hintergrund
-def set_video_background(video_path):
-    try:
-        with open(video_path, "rb") as video_file:
-            video_bytes = video_file.read()
-        video_base64 = base64.b64encode(video_bytes).decode('utf-8')
-        
-        st.markdown(
-            f"""
-            <style>
-            #root > .stApp {{
-                position: relative;
-            }}
-            #root > .stApp:before {{
-                content: "";
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                z-index: -1;
-                background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3));
-            }}
-            #video-background {{
-                position: fixed;
-                right: 0;
-                bottom: 0;
-                min-width: 100%;
-                min-height: 100%;
-                width: auto;
-                height: auto;
-                z-index: -2;
-                object-fit: cover;
-            }}
-            .content-container {{
-                background: rgba(255, 255, 255, 0.85);
-                border-radius: 15px;
-                padding: 25px;
-                box-shadow: 0 8px 32px rgba(0,0,0,0.2);
-                margin: 20px auto;
-                max-width: 600px;
-            }}
-            </style>
-            <video id="video-background" autoplay loop muted playsinline>
-                <source src="data:video/mp4;base64,{video_base64}" type="video/mp4">
-            </video>
-            """,
-            unsafe_allow_html=True
-        )
-    except FileNotFoundError:
-        set_bg_hack()
-
 def set_bg_hack():
     st.markdown(
         """
         <style>
         .stApp {
-            background: linear-gradient(rgba(255,255,255,0.8), rgba(255,255,255,0.8)),
-                        url("https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=1920");
-            background-size: cover;
-            background-position: center;
+            background: linear-gradient(rgba(255,255,255,0.9), rgba(255,255,255,0.9));
         }
-        .block-container {
+        .content-container {
             background-color: rgba(255, 255, 255, 0.95);
             border-radius: 10px;
             padding: 2rem;
             box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-            margin-top: 2rem;
+            margin: 2rem auto;
+            max-width: 600px;
+            text-align: center;
+        }
+        .logo-container {
+            margin: 0 auto 1.5rem;
+            text-align: center;
         }
         </style>
         """,
@@ -109,19 +60,25 @@ def set_bg_hack():
 
 # Hauptfunktion der App
 def main():
-    set_video_background("essen_vorbestellung.mp4")
+    set_bg_hack()
     
     st.markdown('<div class="content-container">', unsafe_allow_html=True)
     
-    st.title("🍽️ Restaurant IM GRUND")
+    # Logo in der Mitte
+    st.markdown('<div class="logo-container">', unsafe_allow_html=True)
+    try:
+        st.image("LOGO_IM_GRUND.png", width=200)  # Stelle sicher, dass die Datei im selben Verzeichnis liegt
+    except:
+        st.title("🍽️ Restaurant IM GRUND")  # Fallback falls Logo nicht gefunden
+    st.markdown('</div>', unsafe_allow_html=True)
+    
+    # Untertitel unter dem Logo
     st.subheader("Vielen Dank für Ihren Besuch!")
     
-    # Instagram-Folgen-Sektion
+    # Instagram-Link mit Angebotshinweis
     st.markdown(
         f"""
-        <div style="text-align: center; margin: 25px 0;">
-            <h3 style="color: #e1306c;">Folge uns auf Instagram!</h3>
-            <p style="font-size: 18px;">Verpasse keine Angebote und Geschenke 🎁</p>
+        <div style="margin: 1.5rem 0;">
             <a href="{INSTAGRAM_LINK}" target="_blank" style="
                 display: inline-block;
                 background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
@@ -131,12 +88,13 @@ def main():
                 text-decoration: none;
                 font-weight: bold;
                 font-size: 18px;
-                margin: 15px 0;
                 box-shadow: 0 4px 15px rgba(225, 48, 108, 0.5);
-                transition: all 0.3s ease;
             ">
                 @restaurant_im_grund
             </a>
+            <p style="font-size: 16px; margin-top: 10px;">
+                Verpasse keine Angebote und Geschenke! 🎁
+            </p>
         </div>
         """,
         unsafe_allow_html=True
