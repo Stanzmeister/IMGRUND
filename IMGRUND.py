@@ -10,6 +10,7 @@ import qrcode
 from PIL import Image
 import io
 import pyperclip
+import base64
 
 # Konfiguration
 GOOGLE_MAPS_LINK = "https://g.page/r/CYlp_8vxjK6dEBM/review"
@@ -29,100 +30,86 @@ def generate_wifi_qr():
     return img_byte_arr.getvalue()
 
 def main():
-    # CSS mit !important für absolute Kontrolle
+    # Custom CSS für Zentrierung
     st.markdown("""
     <style>
-    /* Zentriert ALLE Elemente */
-    [data-testid="stAppViewContainer"] > .main {
-        display: flex !important;
-        flex-direction: column !important;
-        align-items: center !important;
-        text-align: center !important;
+    .centered {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        text-align: center;
     }
-    
-    /* Logo-Container */
-    .logo-container {
-        margin: 0 auto 1rem auto !important;
-        text-align: center !important;
+    .logo-img {
+        max-width: 300px;
+        margin-bottom: 1rem;
     }
-    
-    /* Instagram-Bereich */
-    .instagram-box {
-        margin: 1.5rem auto !important;
-        max-width: 300px !important;
-    }
-    
-    /* Radio-Buttons zentrieren */
-    [data-testid="stRadio"] > div {
-        display: flex !important;
-        justify-content: center !important;
-    }
-    
-    /* Buttons zentrieren */
-    [data-testid="stButton"] > button {
-        margin: 0 auto !important;
-    }
-    
-    /* Spalten-Container für WLAN */
-    [data-testid="column"] {
-        align-items: center !important;
+    .instagram-section {
+        margin: 1.5rem 0;
     }
     </style>
     """, unsafe_allow_html=True)
 
-    # 1. Logo (absolut zentriert)
+    # Zentrierter Container
     with st.container():
-        st.markdown('<div class="logo-container">', unsafe_allow_html=True)
+        st.markdown('<div class="centered">', unsafe_allow_html=True)
+        
+        # Logo (ersetzt durch st.title falls nicht vorhanden)
         try:
-            st.image("LOGO_IM_GRUND.png", width=200, use_container_width=False)
+            st.image("LOGO_IM_GRUND.png", width=200, output_format="PNG", use_column_width='auto', 
+                    caption='', clamp=False, channels='RGB')
         except:
             st.title("🍽️ Restaurant IM GRUND")
+        
+        # Untertitel
         st.subheader("Vielen Dank für Ihren Besuch!")
+        
+        # Instagram Bereich
+        st.markdown('<div class="instagram-section">', unsafe_allow_html=True)
+        st.markdown(f"""
+        <a href="{INSTAGRAM_LINK}" target="_blank">
+            <button style="
+                background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+                color: white;
+                border: none;
+                padding: 12px 30px;
+                border-radius: 30px;
+                font-size: 18px;
+                font-weight: bold;
+                margin: 10px 0;
+                cursor: pointer;
+                box-shadow: 0 4px 15px rgba(225, 48, 108, 0.3);
+            ">
+                Folge uns auf Instagram
+            </button>
+        </a>
+        <p style="margin-top: 8px; font-size: 16px;">
+            Verpasse keine Angebote und Geschenke! 🎁
+        </p>
+        """, unsafe_allow_html=True)
         st.markdown('</div>', unsafe_allow_html=True)
-
-    # 2. Instagram-Bereich (perfekt zentriert)
-    with st.container():
-        st.markdown('<div class="instagram-box">', unsafe_allow_html=True)
-        st.markdown(
-            f'<a href="{INSTAGRAM_LINK}" target="_blank">'
-            '<button style="'
-            'background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);'
-            'color: white; border: none; padding: 12px 30px; border-radius: 30px;'
-            'font-size: 18px; font-weight: bold; margin: 10px 0; cursor: pointer;'
-            'box-shadow: 0 4px 15px rgba(225, 48, 108, 0.3);">'
-            'Folge uns auf Instagram'
-            '</button>'
-            '</a>'
-            '<p style="margin-top: 8px; font-size: 16px;">'
-            'Verpasse keine Angebote und Geschenke! 🎁'
-            '</p>',
-            unsafe_allow_html=True
+        
+        # Auswahloptionen
+        choice = st.radio(
+            "Möchten Sie uns bewerten?",
+            ("⭐ Ja, gerne auf Google Maps", "📶 Nein, ich möchte nur WLAN nutzen"),
+            index=None
         )
-        st.markdown('</div>', unsafe_allow_html=True)
+        
+        st.markdown('</div>', unsafe_allow_html=True)  # Ende centered div
 
-    # 3. Auswahl (zentriert)
-    choice = st.radio(
-        "Möchten Sie uns auf Google Maps bewerten?",
-        ("⭐ Ja, gerne!", "📶 Nein, ich möchte nur WLAN nutzen"),
-        index=None
-    )
-
-    # 4. Aktionen
-    if choice == "⭐ Ja, gerne!":
+    # Bewertungs/WLAN-Logik
+    if choice == "⭐ Ja, gerne auf Google Maps":
         st.link_button("📝 Bewertung schreiben", GOOGLE_MAPS_LINK)
-    
     elif choice == "📶 Nein, ich möchte nur WLAN nutzen":
         st.subheader("WLAN-Zugang")
         col1, col2 = st.columns(2)
-        
         with col1:
-            st.image(generate_wifi_qr(), caption="Scan für WLAN", use_container_width=True)
-        
+            st.image(generate_wifi_qr(), caption="WLAN QR-Code")
         with col2:
             if st.button("📋 Passwort kopieren"):
                 pyperclip.copy(WLAN_PASSWORD)
                 st.success("Kopiert!")
-            
             st.markdown(f"""
                 <a href="{ANDROID_WIFI_LINK}" style="text-decoration:none">
                     <button style="
@@ -132,12 +119,12 @@ def main():
                         🔗 Auto-Connect (Android)
                     </button>
                 </a>
-                <div style="font-size:14px; margin-top:15px; text-align:left">
-                    <strong>Für iPhone:</strong><br>
+                <p style="font-size:14px; margin-top:15px">
+                    <b>Für iPhone:</b><br>
                     1. Einstellungen > WLAN<br>
                     2. {WLAN_SSID} wählen<br>
                     3. Passwort einfügen
-                </div>
+                </p>
             """, unsafe_allow_html=True)
 
 if __name__ == "__main__":
